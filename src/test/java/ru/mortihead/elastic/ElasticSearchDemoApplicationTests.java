@@ -40,6 +40,7 @@ public class ElasticSearchDemoApplicationTests {
 
     @Before
     public void before() {
+        // DELETE All Books before test
         IndexOperations indexOps = operations.indexOps(Book.class);
         indexOps.delete();
         indexOps.create();
@@ -61,6 +62,29 @@ public class ElasticSearchDemoApplicationTests {
         assertEquals(testBook.getAuthor(), book.getAuthor());
         assertEquals(testBook.getReleaseDate(), book.getReleaseDate());
     }
+
+    @Test
+    public void testFindByAuthor0() {
+        List<Book> bookList = new ArrayList<>();
+        bookList.add(new Book("1001", "Elasticsearch in Action", "Radu Gheorghe", "Content is this", "23-FEB-2017"));
+        bookList.add(new Book("1002", "Apache Lucene Basics", "Radu Gheorghe", "Content is this", "13-MAR-2017"));
+        bookList.add(new Book("1003", "Apache Solr Basics", "Radu Gheorghe", "Content is this", "21-MAR-2017"));
+        bookList.add(new Book("1007", "Spring Data + ElasticSearch", "Radu Gheorghe", "Content is this", "01-APR-2017"));
+        bookList.add(new Book("1008", "Spring Boot + MongoDB", "Mkyong", "Content is this", "25-FEB-2017"));
+
+        for (Book book : bookList) {
+            bookService.save(book);
+        }
+
+
+        Page<Book> byAuthor = bookService.findByAuthor("Radu Gheorghe", PageRequest.of(0, 10));
+        System.out.println(byAuthor.getTotalElements());
+
+        Page<Book> all = bookService.findAll(PageRequest.of(0, 10));
+        System.out.println(all.getTotalElements());
+
+    }
+
 
     @Test
     public void testFindOne() {
